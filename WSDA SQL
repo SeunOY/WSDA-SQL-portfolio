@@ -126,27 +126,52 @@ order by  Customers asc
 /*
 Created by: Oluwaseun
 Date: 19/11/2023
-Description:  Query to determine 15% commission on all transactions  per customer between 2011 and 2012 where 
-total sales is more than average sales between 2011 and 2012 grouped by customer name (concatenated first and last name) and sorted by descending commission 
+Description: Description:  Query to determine 15% commission on all transactions  per customer between 2011 
+and 2012 where total sales is more than average sales between 2011 and 2012 grouped by customer name
+(concatenated first and last name) and sorted by descending commission and 
+which transactions are too far off from average sales between 2011 and 2012. Query identified transaction done by
+Jane Peacock for John Doeein with invoice id 413 as the most unusual from average sales
+*/
 
-select c. CustomerId,
+select 
+ c. CustomerId,
 c.FirstName|| ' ' || c.LastName as 'Customer Name',
-sum(total)*0.15 as 'commission payout',
-sum(total) as 'Period Sales',
-(select round( avg(total) , 2)
-from invoice
-where strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012') as 'Average Period Sales'
+e.EmployeeId,
+e.FirstName || ' ' || e.LastName as 'Employee Name',
+i.InvoiceId,
+ i. total,
+i. total*.15 as Commission
 from invoice i
 join Customer c
 on c.CustomerId=i.CustomerId
 join Employee e
 on c.SupportRepId=e.EmployeeId
 where( strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012')
-group by c.CustomerId
-having  sum(total) > 
+and i.total > 
 ( select avg(total) 
 from invoice
 where strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012')
-order by  sum(total)*0.15 desc
+order by  i.total*.15 desc
+
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description:  Query to investigate the details of invoice id 413 generated for customer id 60 John Dooein. According to Query invoice id 413 
+does not exist with sales/track record.
+*/
+
+
+select *
+from invoice i
+join Customer c
+on c.CustomerId=i.CustomerId
+join Employee e
+on c.SupportRepId=e.EmployeeId
+join InvoiceLine Il on i.InvoiceId=Il.InvoiceId
+where( strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012')
+and e.FirstName || ' ' ||e.LastName = 'Jane Peacock'
+and c.FirstName|| ' ' || c.LastName = 'John Doeein'
+
 
 
