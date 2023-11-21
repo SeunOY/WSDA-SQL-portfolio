@@ -1,0 +1,152 @@
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description: Finding average sales by city and comparing to WSDA average ideal sales baseline of 5
+aggregate: average sales, group by city, compare average sales to average total by nestinq query)
+Using Case to label total by sales
+*/
+
+
+select BillingCity,
+avg(total) as 'Average Sales By City',
+(select avg(total) from invoice )as 'Average Total Sales',
+case
+when avg(total)  > 5 then 'ideal sales'
+when avg(total) < 5 then 'not ideal sales'
+end as 'average sales baseline'
+from invoice 
+group by(BillingCity)
+order by avg(total) desc
+
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description:  Joining album, track, playlist, playlist track and artist tables to generate information about artists and 
+their respective albums in the WSDA database ordered by Artist name (asc)
+
+art.Name as 'Artist Name',
+a.ArtistId as 'Artist Id', 
+a.Title as 'Album Title', 
+ a.AlbumId, 
+t.name as 'Track Name', 
+t.TrackId, 
+t.Composer, 
+p.PlaylistId,
+p.Name as 'Playlist Name'
+*/
+
+select
+art.Name as 'Artist Name',
+a.ArtistId as 'Artist Id', 
+a.Title as 'Album Title', 
+a.AlbumId, 
+t.name as 'Track Name', 
+t.TrackId, 
+t.Composer, 
+p.PlaylistId,
+p.Name as 'Playlist Name'
+from album a
+join artist Art
+on a.ArtistId=art.ArtistId
+join track t
+on a.AlbumId=t.AlbumId
+join PlaylistTrack pt
+on pt.TrackId = t.TrackId
+join playlist p
+on p.PlaylistId=pt.PlaylistId
+order by art.name asc
+
+
+Description:  how many albums do the artistes have 
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description:  Analysing the number of albums per artiste
+*/
+
+
+select count (DISTINCT a.Title) as 'Number of Albums', 
+art.name
+from album a
+join artist Art
+on a.ArtistId=art.ArtistId
+join track t
+on a.AlbumId=t.AlbumId
+join PlaylistTrack pt
+on pt.TrackId = t.TrackId
+join playlist p
+on p.PlaylistId=pt.PlaylistId
+group by art.name
+order by art.name asc
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description:  WSDA transactions between 2011 and 2012
+*/
+
+select InvoiceId, CustomerId, total, 
+strftime('%Y', invoicedate) as 'Transaction Year'
+from invoice
+where strftime('%Y', invoicedate) >= '2011'
+and strftime('%Y', invoicedate) <= '2012'
+order by total AS
+
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description: Sum of transactions per
+customer displayed showing  average period total 
+between 2011 and 2012
+*/
+
+
+select c.CustomerId, 
+c.FirstName|| ' '||c.LastName as Customers, 
+sum(total)as Sales,
+(select round(avg (total), 2)  from invoice where strftime('%Y', invoicedate) >= '2011'
+and strftime('%Y', invoicedate) <= '2012'
+) as 'Average Period Total',
+c.SupportRepId,
+from invoice i
+join customer  c
+on i.CustomerId=c.customerid
+join Employee e
+on c.SupportRepId = e.EmployeeId
+where strftime('%Y', invoicedate) >= '2011'
+and strftime('%Y', invoicedate) <= '2012'
+group by Customers
+order by  Customers asc
+
+
+/*
+Created by: Oluwaseun
+Date: 19/11/2023
+Description:  Query to determine 15% commission on all transactions  per customer between 2011 and 2012 where 
+total sales is more than average sales between 2011 and 2012 grouped by customer name (concatenated first and last name) and sorted by descending commission 
+
+select c. CustomerId,
+c.FirstName|| ' ' || c.LastName as 'Customer Name',
+sum(total)*0.15 as 'commission payout',
+sum(total) as 'Period Sales',
+(select round( avg(total) , 2)
+from invoice
+where strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012') as 'Average Period Sales'
+from invoice i
+join Customer c
+on c.CustomerId=i.CustomerId
+join Employee e
+on c.SupportRepId=e.EmployeeId
+where( strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012')
+group by c.CustomerId
+having  sum(total) > 
+( select avg(total) 
+from invoice
+where strftime('%Y', invoicedate) >= '2011' and  strftime('%Y', invoicedate) <= '2012')
+order by  sum(total)*0.15 desc
+
+
