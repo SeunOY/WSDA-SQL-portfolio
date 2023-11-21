@@ -24,7 +24,6 @@ Created by: Oluwaseun
 Date: 19/11/2023
 Description:  Joining album, track, playlist, playlist track and artist tables to generate information about artists and 
 their respective albums in the WSDA database ordered by Artist name (asc)
-
 art.Name as 'Artist Name',
 a.ArtistId as 'Artist Id', 
 a.Title as 'Album Title', 
