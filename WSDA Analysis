@@ -60,7 +60,7 @@ on p.PlaylistId=pt.PlaylistId
 order by art.name asc
 
 
-Description:  how many albums do the artistes have 
+
 
 /*
 Created by: Oluwaseun
@@ -123,15 +123,13 @@ and strftime('%Y', invoicedate) <= '2012'
 group by Customers
 order by  Customers asc
 
-Analysis to investigate discrepancy in financials 
+Analysis to investigate discrepancies in financials 
 
 /*
 Created by: Oluwaseun
 Date: 19/11/2023
-Description: Description:  Query to determine 15% commission on all transactions  per customer between 2011 
-and 2012 whose total sales is more than the average sales between 2011 and 2012 grouped by customer name
-(concatenated first and last name) and sorted by descending commission and. The query identified transaction done by
-Jane Peacock for John Doeein with invoice id 413 as the most unusual from average sales
+Description: Query to determine 15% commission on all transactions  per customer between 2011 and 2012 whose total sales is more than the average sales between 2011 and 2012 grouped by customer name
+(concatenated first and last name) and sorted by descending commission and. The query identified transaction done by Jane Peacock for John Doeein with invoice id 413 as the most unusual from average sales
 */
 
 select 
