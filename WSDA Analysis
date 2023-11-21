@@ -7,8 +7,6 @@ Description: Finding average sales by city and comparing to WSDA average ideal s
 aggregate: average sales, group by city, compare average sales to average total by nestinq query)
 Using Case to label total by sales
 */
-
-
 select BillingCity,
 avg(total) as 'Average Sales By City',
 (select avg(total) from invoice )as 'Average Total Sales',
@@ -37,7 +35,6 @@ t.Composer,
 p.PlaylistId,
 p.Name as 'Playlist Name'
 */
-
 select
 art.Name as 'Artist Name',
 a.ArtistId as 'Artist Id', 
@@ -59,16 +56,11 @@ join playlist p
 on p.PlaylistId=pt.PlaylistId
 order by art.name asc
 
-
-
-
 /*
 Created by: Oluwaseun
 Date: 19/11/2023
 Description:  Analysing the number of albums per artiste
 */
-
-
 select count (DISTINCT a.Title) as 'Number of Albums', 
 art.name
 from album a
@@ -88,7 +80,6 @@ Created by: Oluwaseun
 Date: 19/11/2023
 Description:  WSDA transactions between 2011 and 2012
 */
-
 select InvoiceId, CustomerId, total, 
 strftime('%Y', invoicedate) as 'Transaction Year'
 from invoice
@@ -104,8 +95,6 @@ Description: Sum of transactions per
 customer displayed showing  average period total 
 between 2011 and 2012
 */
-
-
 select c.CustomerId, 
 c.FirstName|| ' '||c.LastName as Customers, 
 sum(total)as Sales,
@@ -131,7 +120,6 @@ Date: 19/11/2023
 Description: Query to determine 15% commission on all transactions  per customer between 2011 and 2012 whose total sales is more than the average sales between 2011 and 2012 grouped by customer name
 (concatenated first and last name) and sorted by descending commission and. The query identified transaction done by Jane Peacock for John Doeein with invoice id 413 as the most unusual from average sales
 */
-
 select 
  c. CustomerId,
 c.FirstName|| ' ' || c.LastName as 'Customer Name',
@@ -159,8 +147,6 @@ Date: 19/11/2023
 Description:  Query to investigate the details of invoice id 413 generated for customer id 60 John Dooein. According to Query invoice id 413 
 does not exist with sales/track record.
 */
-
-
 select *
 from invoice i
 join Customer c
